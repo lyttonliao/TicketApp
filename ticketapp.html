@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <title>Ticket App</title>
     <link rel="stylesheet" href="./assets/css/ticketitem.css">
+    <link rel="stylesheet" href="./assets/css/reset.css">
+    <link rel="stylesheet" href="./assets/css/filter.css">
     <script>
     </script>
 </head>
@@ -11,13 +13,18 @@
     <div id="list">
     </div>
     <div id="filters">
-        <div id="filter-header">
-            <p id="filter-by">Filter By</p>
-            <p id="clear-filter">Clear All</p>
+        <div id="form">
+            <div id="filter-header">
+                <p id="filter-by">Filter By</p>
+                <p id="clear-filter">Clear All</p>
+            </div>
+            <div>
+                <p id="location">Location</p>
+                <select id="location-filter">
+                    <option disabled selected value=""> Select A Location </option>
+                </select>
+            </div>
         </div>
-        <select id="location-filter">
-            <option disabled selected value> -- select an option -- </option>
-        </select>
     </div>
     <script src="./dist/bundle.js"></script>
 </body>

@@ -2789,10 +2789,11 @@ class TicketApp {
                 locationFilter.appendChild(loc);
             }
         }
+        // location.sort
     }
 
     filterLocation(location) {
-        this.resetFilter();
+        this.resetFilter(this.events);
         if (location) {
             this.events.forEach(event => {
                 if (event.city !== location) {
@@ -2803,8 +2804,8 @@ class TicketApp {
         };
     };
 
-    resetFilter() {
-        this.events.forEach(event => {
+    resetFilter(events) {
+        events.forEach(event => {
             event.listing.style.display = "flex";
         });
     };
@@ -2812,9 +2813,18 @@ class TicketApp {
     startApp() {
         this.eventlist = _eventlist__WEBPACK_IMPORTED_MODULE_0__.default;
         this.events = this.createEventList();
+        this.createEventListeners();
         this.createLocationFilter();
     }
 
+    createEventListeners() {
+        let locationFilter = document.getElementById('location-filter');
+        const clearAll = document.getElementById('clear-filter');
+        clearAll.addEventListener('click', () => {
+            this.resetFilter(this.events);
+            locationFilter.value = "";
+        });
+    };
 };
 
 var application = new TicketApp();

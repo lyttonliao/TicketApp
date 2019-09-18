@@ -1,0 +1,8 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+}
+
+#list {
+    padding: 0 1%;
+}
