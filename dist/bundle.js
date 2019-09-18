@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "./src/ticketapp.js");
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/ticketapp_part3.js");
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -96,7 +96,7 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 class EventItem {
-    constructor(day, date, time, event, venue, city, price, isSellingFast) {
+    constructor(day, date, time, event, venue, city, price, isSellingFast, isSoldOut) {
         this.day = day;
         this.date = date;
         this.time = time;
@@ -105,6 +105,7 @@ class EventItem {
         this.city = city;
         this.price = price;
         this.isSellingFast = isSellingFast;
+        this.isSoldOut = isSoldOut;
 
         this.listing = document.createElement('div');
         this.listing.classList.add('event-listing');
@@ -121,6 +122,10 @@ class EventItem {
         this.updateTimeInfo();
         this.updateEventInfo();
     };
+
+    convertToUSD() {
+        return "$" + `${Math.ceil(parseInt(this.price.slice(1)) * 1.25)}`
+    }
 
     updateTimeInfo() {
         let timeInfo = document.createElement('ul');
@@ -150,7 +155,7 @@ class EventItem {
 
         let price = document.createElement('div');
         price.classList.add('price');
-        price.innerHTML = `${this.price}`;
+        price.innerHTML = `${this.convertToUSD()}`;
 
         if (this.isSellingFast) {
             price.classList.add('yellow');
@@ -2749,10 +2754,10 @@ const eventlist = {
 
 /***/ }),
 
-/***/ "./src/ticketapp.js":
-/*!**************************!*\
-  !*** ./src/ticketapp.js ***!
-  \**************************/
+/***/ "./src/ticketapp_part3.js":
+/*!********************************!*\
+  !*** ./src/ticketapp_part3.js ***!
+  \********************************/
 /*! no exports provided */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -2775,11 +2780,9 @@ class TicketApp {
         return events
     };
     
-    // part 2
     createLocationFilter() {   
         let locationFilter = document.getElementById('location-filter');
         let uniqueLocations = new Set()
-        locationFilter.addEventListener('change', e => this.filterLocation(e.target.value));
         for (let item of this.eventlist.Items) {
             let loc = document.createElement('option');
             loc.value = item.VenueCity;
@@ -2787,21 +2790,57 @@ class TicketApp {
             if (!uniqueLocations.has(item.VenueCity)) {
                 uniqueLocations.add(item.VenueCity);
                 locationFilter.appendChild(loc);
-            }
-        }
-        // location.sort
-    }
+            };
+        };
+    };
 
     filterLocation(location) {
-        this.resetFilter(this.events);
+        this.undoFilter(this.prevLocation, 'location')
         if (location) {
             this.events.forEach(event => {
                 if (event.city !== location) {
-                    debugger
                     event.listing.style.display = "none";
                 };
             });
         };
+        this.prevLocation = location;
+    };
+
+    filterAvailability() {
+
+    }
+
+    
+    createEventListeners() {
+        let locationFilter = document.getElementById('location-filter');
+        locationFilter.addEventListener('change', e => this.filterLocation(e.target.value));
+        
+        const clearAll = document.getElementById('clear-filter');
+        clearAll.addEventListener('click', () => {
+            this.resetFilter(this.events);
+            locationFilter.value = "";
+        });
+        
+        let available = document.getElementById('availability')
+        let checkbox = document.getElementById('checkbox')
+        available.addEventListener('click', () => {
+            if (checkbox.checked) {
+                
+            }
+        })
+    };
+
+    undoFilter(value, filter) {
+        if (filter === 'location') {
+            this.events.forEach(event => {
+                debugger
+                if (event.city !== value) {
+                    event.listing.style.display = "flex";
+                };
+            });
+        } else if (filter === 'availability') {
+
+        }
     };
 
     resetFilter(events) {
@@ -2816,15 +2855,6 @@ class TicketApp {
         this.createEventListeners();
         this.createLocationFilter();
     }
-
-    createEventListeners() {
-        let locationFilter = document.getElementById('location-filter');
-        const clearAll = document.getElementById('clear-filter');
-        clearAll.addEventListener('click', () => {
-            this.resetFilter(this.events);
-            locationFilter.value = "";
-        });
-    };
 };
 
 var application = new TicketApp();

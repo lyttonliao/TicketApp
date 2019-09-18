@@ -29,6 +29,10 @@
     margin: .2em 0;
 }
 
+#location-section {
+    padding: 5% 0;
+}
+
 #location-filter {
     display: block;
     font-size: 16px;
@@ -60,4 +64,58 @@
     box-shadow: 0 0 1px 3px rgba(59, 153, 252, .7);
     color: #222; 
     outline: none;
+}
+
+#availability {
+    display: block;
+    position: relative;
+    padding-left: 25px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+#availability input {
+    display: none;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 16px;
+    width: 16px;
+    background-color: #eee;
+}
+
+/* On mouse-over, add a grey background color */
+#availability:hover input ~ .checkmark {
+    background-color: #ccc;
+}
+
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+/* Show the checkmark when checked */
+#availability input:checked ~ .checkmark:after {
+    display: block;
+}
+
+/* Style the checkmark/indicator */
+#availability .checkmark:after {
+    left: 5px;
+    /* top: 5px; */
+    width: 3px;
+    height: 10px;
+    border: solid black;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
 }

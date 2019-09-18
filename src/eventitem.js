@@ -1,5 +1,5 @@
 class EventItem {
-    constructor(day, date, time, event, venue, city, price, isSellingFast) {
+    constructor(day, date, time, event, venue, city, price, isSellingFast, isSoldOut) {
         this.day = day;
         this.date = date;
         this.time = time;
@@ -8,6 +8,7 @@ class EventItem {
         this.city = city;
         this.price = price;
         this.isSellingFast = isSellingFast;
+        this.isSoldOut = isSoldOut;
 
         this.listing = document.createElement('div');
         this.listing.classList.add('event-listing');
@@ -24,6 +25,10 @@ class EventItem {
         this.updateTimeInfo();
         this.updateEventInfo();
     };
+
+    convertToUSD() {
+        return "$" + `${Math.ceil(parseInt(this.price.slice(1)) * 1.25)}`
+    }
 
     updateTimeInfo() {
         let timeInfo = document.createElement('ul');
@@ -53,7 +58,7 @@ class EventItem {
 
         let price = document.createElement('div');
         price.classList.add('price');
-        price.innerHTML = `${this.price}`;
+        price.innerHTML = `${this.convertToUSD()}`;
 
         if (this.isSellingFast) {
             price.classList.add('yellow');

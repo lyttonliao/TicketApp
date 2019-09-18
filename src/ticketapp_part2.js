@@ -17,7 +17,6 @@ class TicketApp {
     createLocationFilter() {   
         let locationFilter = document.getElementById('location-filter');
         let uniqueLocations = new Set()
-        locationFilter.addEventListener('change', e => this.filterLocation(e.target.value));
         for (let item of this.eventlist.Items) {
             let loc = document.createElement('option');
             loc.value = item.VenueCity;
@@ -25,10 +24,9 @@ class TicketApp {
             if (!uniqueLocations.has(item.VenueCity)) {
                 uniqueLocations.add(item.VenueCity);
                 locationFilter.appendChild(loc);
-            }
-        }
-        // location.sort
-    }
+            };
+        };
+    };
 
     filterLocation(location) {
         this.resetFilter(this.events);
@@ -57,6 +55,8 @@ class TicketApp {
 
     createEventListeners() {
         let locationFilter = document.getElementById('location-filter');
+        locationFilter.addEventListener('change', e => this.filterLocation(e.target.value));
+        
         const clearAll = document.getElementById('clear-filter');
         clearAll.addEventListener('click', () => {
             this.resetFilter(this.events);
