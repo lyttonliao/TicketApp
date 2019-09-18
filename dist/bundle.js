@@ -2764,11 +2764,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class TicketApp {
-    // constructor() {
-    //     this.eventlist = _eventlist__WEBPACK_IMPORTED_MODULE_0__.default;
-    //     this.createLocationFilter();
-    //     this.events = this.createEventList();
-    // };
 
     createEventList() {
         let list = document.getElementById('list');
@@ -2781,25 +2776,37 @@ class TicketApp {
     };
     
     // part 2
-    createLocationFilter() {    
+    createLocationFilter() {   
         let locationFilter = document.getElementById('location-filter');
+        let uniqueLocations = new Set()
         locationFilter.addEventListener('change', e => this.filterLocation(e.target.value));
         for (let item of this.eventlist.Items) {
             let loc = document.createElement('option');
             loc.value = item.VenueCity;
             loc.innerHTML = item.VenueCity;
-            locationFilter.appendChild(loc);
+            if (!uniqueLocations.has(item.VenueCity)) {
+                uniqueLocations.add(item.VenueCity);
+                locationFilter.appendChild(loc);
+            }
         }
     }
 
     filterLocation(location) {
+        this.resetFilter();
         if (location) {
             this.events.forEach(event => {
                 if (event.city !== location) {
-                    event.listing.setAttribute('display', 'none');
+                    debugger
+                    event.listing.style.display = "none";
                 };
             });
-        }
+        };
+    };
+
+    resetFilter() {
+        this.events.forEach(event => {
+            event.listing.style.display = "flex";
+        });
     };
 
     startApp() {
