@@ -1,0 +1,40 @@
+li {
+    list-style: none;
+}
+
+ul {
+    padding: 0;
+}
+
+.event-listing {
+    display: flex;
+    width: 700px;
+    border: 1px solid rgb(180, 175, 175);
+}
+
+.left-info {
+    width: 150px;
+    padding-left: 10px;
+    background-color: rgb(206, 203, 203)
+}
+
+.right-info {
+    padding-left: 10px;
+    display:flex;
+    justify-content: space-between;
+    width: 650px;
+}
+
+.price {
+    margin-top: auto;
+    margin-bottom: auto;
+    padding: .5em;
+    margin-right: 10px;
+    border: transparent;
+    background-color: #8cc63f;
+    box-shadow: inset 0 -2px 0 #6c9a2e;
+    border-radius: 5px;
+    width: 50px;
+    text-align: center;
+    color: white;
+}
