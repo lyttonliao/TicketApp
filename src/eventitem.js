@@ -26,11 +26,13 @@ class EventItem {
         this.updateEventInfo();
     };
 
+    // converts pounds to dollars
     convertToUSD() {
         this.price = Math.ceil(parseInt(this.price.slice(1)) * 1.25);
         return "$" + `${this.price}`;
     }
 
+    // creates the left portion of event tickets that display information on time
     updateTimeInfo() {
         let timeInfo = document.createElement('ul');
         timeInfo.classList.add('time-info');
@@ -53,6 +55,7 @@ class EventItem {
         this.leftInfo.appendChild(timeInfo)
     };
 
+    // creates the right portion of event tickets that display information on the venue, location, and price
     updateEventInfo() {
         let eventInfo = document.createElement('ul');
         eventInfo.classList.add('event-info');

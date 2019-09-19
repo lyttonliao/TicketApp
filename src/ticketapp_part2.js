@@ -3,6 +3,7 @@ import EventItem from './eventitem'
 
 class TicketApp {
 
+    // creates an Array of EventItems
     createEventList() {
         let list = document.getElementById('list');
         let events = this.eventlist.Items.map(item => {
@@ -10,9 +11,10 @@ class TicketApp {
             list.appendChild(event.listing);
             return event;
         });
-        return events
+        return events;
     };
     
+    // creates the dropdown menu, which users can select a location to filter by
     createLocationFilter() {   
         let locationFilter = document.getElementById('location-filter');
         let uniqueLocations = new Set()
@@ -27,31 +29,27 @@ class TicketApp {
         };
     };
 
+    // filter by location, every time the location is changed, it'll rerun the filter
     filterLocation(location) {
         this.resetFilter(this.events);
         if (location) {
             this.events.forEach(event => {
                 if (event.city !== location) {
-                    debugger
                     event.listing.style.display = "none";
                 };
             });
         };
     };
 
+    // does not wipe the list of filters, it only resets the list of events and redisplays them, 
+    // an eventlistener to clearAll removes the existing filters
     resetFilter(events) {
         events.forEach(event => {
             event.listing.style.display = "flex";
         });
     };
 
-    startApp() {
-        this.eventlist = _eventlist__WEBPACK_IMPORTED_MODULE_0__.default;
-        this.events = this.createEventList();
-        this.createEventListeners();
-        this.createLocationFilter();
-    }
-
+    // adding all event listeners that allow for adding/deleting filters
     createEventListeners() {
         let locationFilter = document.getElementById('location-filter');
         locationFilter.addEventListener('change', e => this.filterLocation(e.target.value));
@@ -62,6 +60,15 @@ class TicketApp {
             locationFilter.value = "";
         });
     };
+
+    // initiates application
+    startApp() {
+        this.eventlist = _eventlist__WEBPACK_IMPORTED_MODULE_0__.default;
+        this.events = this.createEventList();
+        this.createEventListeners();
+        this.createLocationFilter();
+    };
+
 };
 
 var application = new TicketApp();
