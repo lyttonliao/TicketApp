@@ -27,26 +27,52 @@ class TicketApp {
         };
     };
 
-    filterLocation(location) {
-        this.undoFilter(this.prevLocation, 'location')
-        if (location) {
-            this.events.forEach(event => {
-                if (event.city !== location) {
-                    event.listing.style.display = "none";
-                };
-            });
+    addFilter(filterType) {
+        this.filters.add(filterType);
+        this.resetFilter(this.events);
+        this.runFilters();
+    }
+
+    removeFilter(filterType) {
+        this.filters.delete(filterType);
+        this.resetFilter(this.events);
+        this.runFilters();
+    }
+
+    runFilters() {
+        for (let filter of this.filters) {
+            this.filterTypes[filter].call(this);
         };
-        this.prevLocation = location;
+    };
+
+    filterLocation() {
+        debugger
+        this.events.forEach(event => {
+            if (event.city !== this.location) {
+                event.listing.style.display = "none";
+            };
+        });
     };
 
     filterAvailability() {
-
+        this.events.forEach(event => {
+            if (event.isSoldOut) event.listing.style.display = "none";
+        })
     }
 
-    
+    filterPrice(price) {
+        this.events.forEach(event => {
+            if (event.price > price) event.listing.style.display = "none";
+        })
+        this.lastPrice = price
+    }
+
     createEventListeners() {
         let locationFilter = document.getElementById('location-filter');
-        locationFilter.addEventListener('change', e => this.filterLocation(e.target.value));
+        locationFilter.addEventListener('change', e => {
+            this.location = e.target.value;
+            this.addFilter('location')
+        });
         
         const clearAll = document.getElementById('clear-filter');
         clearAll.addEventListener('click', () => {
@@ -58,22 +84,11 @@ class TicketApp {
         let checkbox = document.getElementById('checkbox')
         available.addEventListener('click', () => {
             if (checkbox.checked) {
-                
-            }
-        })
-    };
-
-    undoFilter(value, filter) {
-        if (filter === 'location') {
-            this.events.forEach(event => {
-                debugger
-                if (event.city !== value) {
-                    event.listing.style.display = "flex";
-                };
-            });
-        } else if (filter === 'availability') {
-
-        }
+                this.addFilter('availability');
+            } else {
+                this.removeFilter('availability');
+            };
+        });
     };
 
     resetFilter(events) {
@@ -82,7 +97,17 @@ class TicketApp {
         });
     };
 
+    filterFunctions() {
+        this.filterTypes = {
+            'location': function() { this.filterLocation() },
+            'availability': function() { this.filterAvailability() },
+            'price': function() { this.filterPrice() }
+        }
+    }
+
     startApp() {
+        this.filters = new Set();
+        this.filterFunctions();
         this.eventlist = _eventlist__WEBPACK_IMPORTED_MODULE_0__.default;
         this.events = this.createEventList();
         this.createEventListeners();

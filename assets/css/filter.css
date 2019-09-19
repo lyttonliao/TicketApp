@@ -79,7 +79,6 @@
     display: none;
 }
 
-/* Create a custom checkbox */
 .checkmark {
     position: absolute;
     top: 0;
@@ -89,28 +88,22 @@
     background-color: #eee;
 }
 
-/* On mouse-over, add a grey background color */
 #availability:hover input ~ .checkmark {
     background-color: #ccc;
 }
 
-
-/* Create the checkmark/indicator (hidden when not checked) */
 .checkmark:after {
     content: "";
     position: absolute;
     display: none;
 }
 
-/* Show the checkmark when checked */
 #availability input:checked ~ .checkmark:after {
     display: block;
 }
 
-/* Style the checkmark/indicator */
 #availability .checkmark:after {
     left: 5px;
-    /* top: 5px; */
     width: 3px;
     height: 10px;
     border: solid black;
@@ -118,4 +111,24 @@
     -webkit-transform: rotate(45deg);
     -ms-transform: rotate(45deg);
     transform: rotate(45deg);
+}
+
+#price-title {
+    margin: .2em 0
+} 
+
+#price-section {
+    padding: 5% 0;
+}
+
+/* #price-range {
+    display: flex;
+    justify-content: space-between;
+} */
+
+#price-range input {
+    width: 40%;
+    padding: .5em;
+    line-height: 18px;
+    font-size: 14px;
 }
