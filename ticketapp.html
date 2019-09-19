@@ -10,32 +10,48 @@
     </script>
 </head>
 <body>
-    <div id="list">
-    </div>
     <div id="filters">
         <div id="form">
-            <div id="filter-header">
+            <div class="filter-header">
                 <p id="filter-by">Filter By</p>
-                <p id="clear-filter">Clear All</p>
+                <p id="clear-all" class="clear-filter">Clear All</p>
             </div>
             <div id="location-section">
-                <p id="location">Location</p>
+                <div class="filter-header">
+                    <p id="location">Location</p>
+                    <p id="clear-location" class="clear-filter">Clear</p>
+                </div>
                 <select id="location-filter">
                     <option disabled selected value=""> Select A Location </option>
                 </select>
             </div>
             <div id="price-section">
-                <p id="price-title">Price Range</p>
+                <div class="filter-header">
+                    <p id="price-title">Price Range</p>
+                    <p id="clear-price" class="clear-filter">Clear</p>
+                </div>
                 <form id="price-range">
-                    <input id="min-price" placeholder="Min Price"></input>
-                    <input id="max-price" placeholder="Max Price"></input>
+                    <input id="min-price" placeholder="Min Price" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" ></input>
+                    <input id="max-price" placeholder="Max Price" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" ></input>
+                </form>
+            </div>
+            <div id="date-section">
+                <div class="filter-header">
+                    <p id="date-title">Dates</p>
+                    <p id="clear-date" class="clear-filter">Clear</p>
+                </div>
+                <form id="dates">
+                    <input id="start-date" type="date" value="" min="2018-12-01" max="2019-03-31">
+                    <input id="end-date" type="date" value="" min="2018-12-01" max="2019-03-31">                    
                 </form>
             </div>
             <label id="availability">Only show events with tickets available
-                <input id="checkbox" type="checkbox" checked="checked">
+                <input id="checkbox" type="checkbox" checked=true>
                 <span class="checkmark"></span>
             </label>
         </div>
+    </div>
+    <div id="list">
     </div>
     <script src="./dist/bundle.js"></script>
 </body>

@@ -86,6 +86,166 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "./node_modules/vm-browserify/index.js":
+/*!*********************************************!*\
+  !*** ./node_modules/vm-browserify/index.js ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+var indexOf = function (xs, item) {
+    if (xs.indexOf) return xs.indexOf(item);
+    else for (var i = 0; i < xs.length; i++) {
+        if (xs[i] === item) return i;
+    }
+    return -1;
+};
+var Object_keys = function (obj) {
+    if (Object.keys) return Object.keys(obj)
+    else {
+        var res = [];
+        for (var key in obj) res.push(key)
+        return res;
+    }
+};
+
+var forEach = function (xs, fn) {
+    if (xs.forEach) return xs.forEach(fn)
+    else for (var i = 0; i < xs.length; i++) {
+        fn(xs[i], i, xs);
+    }
+};
+
+var defineProp = (function() {
+    try {
+        Object.defineProperty({}, '_', {});
+        return function(obj, name, value) {
+            Object.defineProperty(obj, name, {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+                value: value
+            })
+        };
+    } catch(e) {
+        return function(obj, name, value) {
+            obj[name] = value;
+        };
+    }
+}());
+
+var globals = ['Array', 'Boolean', 'Date', 'Error', 'EvalError', 'Function',
+'Infinity', 'JSON', 'Math', 'NaN', 'Number', 'Object', 'RangeError',
+'ReferenceError', 'RegExp', 'String', 'SyntaxError', 'TypeError', 'URIError',
+'decodeURI', 'decodeURIComponent', 'encodeURI', 'encodeURIComponent', 'escape',
+'eval', 'isFinite', 'isNaN', 'parseFloat', 'parseInt', 'undefined', 'unescape'];
+
+function Context() {}
+Context.prototype = {};
+
+var Script = exports.Script = function NodeScript (code) {
+    if (!(this instanceof Script)) return new Script(code);
+    this.code = code;
+};
+
+Script.prototype.runInContext = function (context) {
+    if (!(context instanceof Context)) {
+        throw new TypeError("needs a 'context' argument.");
+    }
+    
+    var iframe = document.createElement('iframe');
+    if (!iframe.style) iframe.style = {};
+    iframe.style.display = 'none';
+    
+    document.body.appendChild(iframe);
+    
+    var win = iframe.contentWindow;
+    var wEval = win.eval, wExecScript = win.execScript;
+
+    if (!wEval && wExecScript) {
+        // win.eval() magically appears when this is called in IE:
+        wExecScript.call(win, 'null');
+        wEval = win.eval;
+    }
+    
+    forEach(Object_keys(context), function (key) {
+        win[key] = context[key];
+    });
+    forEach(globals, function (key) {
+        if (context[key]) {
+            win[key] = context[key];
+        }
+    });
+    
+    var winKeys = Object_keys(win);
+
+    var res = wEval.call(win, this.code);
+    
+    forEach(Object_keys(win), function (key) {
+        // Avoid copying circular objects like `top` and `window` by only
+        // updating existing context properties or new properties in the `win`
+        // that was only introduced after the eval.
+        if (key in context || indexOf(winKeys, key) === -1) {
+            context[key] = win[key];
+        }
+    });
+
+    forEach(globals, function (key) {
+        if (!(key in context)) {
+            defineProp(context, key, win[key]);
+        }
+    });
+    
+    document.body.removeChild(iframe);
+    
+    return res;
+};
+
+Script.prototype.runInThisContext = function () {
+    return eval(this.code); // maybe...
+};
+
+Script.prototype.runInNewContext = function (context) {
+    var ctx = Script.createContext(context);
+    var res = this.runInContext(ctx);
+
+    if (context) {
+        forEach(Object_keys(ctx), function (key) {
+            context[key] = ctx[key];
+        });
+    }
+
+    return res;
+};
+
+forEach(Object_keys(Script.prototype), function (name) {
+    exports[name] = Script[name] = function (code) {
+        var s = Script(code);
+        return s[name].apply(s, [].slice.call(arguments, 1));
+    };
+});
+
+exports.isContext = function (context) {
+    return context instanceof Context;
+};
+
+exports.createScript = function (code) {
+    return exports.Script(code);
+};
+
+exports.createContext = Script.createContext = function (context) {
+    var copy = new Context();
+    if(typeof context === 'object') {
+        forEach(Object_keys(context), function (key) {
+            copy[key] = context[key];
+        });
+    }
+    return copy;
+};
+
+
+/***/ }),
+
 /***/ "./src/eventitem.js":
 /*!**************************!*\
   !*** ./src/eventitem.js ***!
@@ -96,7 +256,7 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 class EventItem {
-    constructor(day, date, time, event, venue, city, price, isSellingFast, isSoldOut) {
+    constructor(day, date, time, event, venue, city, price, isSellingFast, isSoldOut, dateVal) {
         this.day = day;
         this.date = date;
         this.time = time;
@@ -106,6 +266,7 @@ class EventItem {
         this.price = price;
         this.isSellingFast = isSellingFast;
         this.isSoldOut = isSoldOut;
+        this.dateVal = dateVal;
 
         this.listing = document.createElement('div');
         this.listing.classList.add('event-listing');
@@ -124,7 +285,8 @@ class EventItem {
     };
 
     convertToUSD() {
-        return "$" + `${Math.ceil(parseInt(this.price.slice(1)) * 1.25)}`
+        this.price = Math.ceil(parseInt(this.price.slice(1)) * 1.25);
+        return "$" + `${this.price}`;
     }
 
     updateTimeInfo() {
@@ -2765,6 +2927,9 @@ const eventlist = {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _eventlist__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./eventlist */ "./src/eventlist.js");
 /* harmony import */ var _eventitem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./eventitem */ "./src/eventitem.js");
+/* harmony import */ var vm__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vm */ "./node_modules/vm-browserify/index.js");
+/* harmony import */ var vm__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(vm__WEBPACK_IMPORTED_MODULE_2__);
+
 
 
 
@@ -2773,11 +2938,11 @@ class TicketApp {
     createEventList() {
         let list = document.getElementById('list');
         let events = this.eventlist.Items.map(item => {
-            let event = new _eventitem__WEBPACK_IMPORTED_MODULE_1__["default"](item.Day, item.Date, item.Time, item.EventName, item.VenueName, item.VenueCity, item.MinPrice, item.IsSellingFast, item.IsSoldOut);
+            let event = new _eventitem__WEBPACK_IMPORTED_MODULE_1__["default"](item.Day, item.Date, item.Time, item.EventName, item.VenueName, item.VenueCity, item.MinPrice, item.IsSellingFast, item.IsSoldOut, item.DateVal);
             list.appendChild(event.listing);
             return event;
         });
-        return events
+        return events;
     };
     
     createLocationFilter() {   
@@ -2813,7 +2978,6 @@ class TicketApp {
     };
 
     filterLocation() {
-        debugger
         this.events.forEach(event => {
             if (event.city !== this.location) {
                 event.listing.style.display = "none";
@@ -2825,36 +2989,100 @@ class TicketApp {
         this.events.forEach(event => {
             if (event.isSoldOut) event.listing.style.display = "none";
         })
-    }
+    };
 
-    filterPrice(price) {
+    filterPrice() {
+        this.minPrice = this.minPrice || 0;
+        this.maxPrice = this.maxPrice || Number.MAX_SAFE_INTEGER;
         this.events.forEach(event => {
-            if (event.price > price) event.listing.style.display = "none";
-        })
-        this.lastPrice = price
-    }
+            if (event.price <= this.minPrice || event.price >= this.maxPrice) event.listing.style.display = "none";
+        });
+    };
+
+    filterDate() {
+        this.startDate = this.startDate || "2018-01-01";
+        this.endDate = this.endDate || "2019-12-31";
+        this.events.forEach(event => {
+            const date = Date.parse(event.dateVal.slice(0,10));
+            debugger
+            if (Date.parse(this.startDate) > date || Date.parse(this.endDate) < date) event.listing.style.display = "none";
+        });
+    };
 
     createEventListeners() {
-        let locationFilter = document.getElementById('location-filter');
-        locationFilter.addEventListener('change', e => {
-            this.location = e.target.value;
-            this.addFilter('location')
-        });
         
-        const clearAll = document.getElementById('clear-filter');
+        let clearAll = document.getElementById('clear-all');
+        let clearPrice = document.getElementById('clear-price');
+        let clearLocation = document.getElementById('clear-location');
+        let clearDate = document.getElementById('clear-date');
+        
+        let locationFilter = document.getElementById('location-filter');
+        let available = document.getElementById('availability');
+        let checkbox = document.getElementById('checkbox');
+
+        let min = document.getElementById('min-price');
+        let max = document.getElementById('max-price');
+
+        let startDate = document.getElementById('start-date');
+        let endDate = document.getElementById('end-date');
+
+        
         clearAll.addEventListener('click', () => {
             this.resetFilter(this.events);
             locationFilter.value = "";
+            checkbox.checked = true;
+            min.value = "";
+            max.value = "";
+            startDate.value = "";
+            endDate.value = "";
         });
         
-        let available = document.getElementById('availability')
-        let checkbox = document.getElementById('checkbox')
+        clearPrice.addEventListener('click', () => {
+            this.removeFilter('price');
+            min.value = "";
+            max.value = "";
+        });
+        
+        clearLocation.addEventListener('click', () => {
+            this.removeFilter('location');
+            locationFilter.value = ""
+        });
+        
+        clearDate.addEventListener('click', () => {
+            this.removeFilter('date');
+            startDate.value = "";
+            endDate.value = "";
+        });
+        
+        locationFilter.addEventListener('change', e => {
+            this.location = e.target.value;
+            this.addFilter('location');
+        });
+        
         available.addEventListener('click', () => {
             if (checkbox.checked) {
                 this.addFilter('availability');
             } else {
                 this.removeFilter('availability');
             };
+        });
+
+        min.addEventListener('change', e => {
+            this.minPrice = e.target.value;
+            this.addFilter('price')
+        });
+        max.addEventListener('change', e => {
+            this.maxPrice = e.target.value;
+            this.addFilter('price')
+        });
+
+        startDate.addEventListener('change', e => {
+            this.startDate = e.target.value;
+            this.addFilter('date')
+        });
+        endDate.addEventListener('change', e => {
+            this.endDate = e.target.value;
+            this.addFilter('date')
         });
     };
 
@@ -2868,9 +3096,10 @@ class TicketApp {
         this.filterTypes = {
             'location': function() { this.filterLocation() },
             'availability': function() { this.filterAvailability() },
-            'price': function() { this.filterPrice() }
-        }
-    }
+            'price': function() { this.filterPrice() },
+            'date': function() { this.filterDate() }
+        };
+    };
 
     startApp() {
         this.filters = new Set();
@@ -2879,7 +3108,7 @@ class TicketApp {
         this.events = this.createEventList();
         this.createEventListeners();
         this.createLocationFilter();
-    }
+    };
 };
 
 var application = new TicketApp();
