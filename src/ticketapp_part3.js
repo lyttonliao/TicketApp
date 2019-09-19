@@ -7,7 +7,7 @@ class TicketApp {
     createEventList() {
         let list = document.getElementById('list');
         let events = this.eventlist.Items.map(item => {
-            let event = new EventItem(item.Day, item.Date, item.Time, item.EventName, item.VenueName, item.VenueCity, item.MinPrice, item.IsSellingFast, item.IsSoldOut, item.DateVal);
+            let event = new EventItem(item.Day, item.Date, item.Time, item.EventName, item.VenueName, item.VenueCity, item.MinPrice, item.IsSoldOut, item.DateVal);
             list.appendChild(event.listing);
             return event;
         });
@@ -30,6 +30,10 @@ class TicketApp {
 
     addFilter(filterType) {
         this.filters.add(filterType);
+        this.filterTypes[filterType].call(this);
+    }
+
+    redoFilter() {
         this.resetFilter(this.events);
         this.runFilters();
     }
@@ -125,33 +129,29 @@ class TicketApp {
         
         locationFilter.addEventListener('change', e => {
             this.location = e.target.value;
-            this.addFilter('location');
+            (this.filters.has('location')) ? this.redoFilter() : this.addFilter('location');
         });
-        
+
         available.addEventListener('click', () => {
-            if (checkbox.checked) {
-                this.addFilter('availability');
-            } else {
-                this.removeFilter('availability');
-            };
+            (checkbox.checked) ? this.addFilter('availability') : this.removeFilter('availability');
         });
 
         min.addEventListener('change', e => {
             this.minPrice = e.target.value;
-            this.addFilter('price')
+            (this.filters.has('price')) ? this.redoFilter() : this.addFilter('price');
         });
         max.addEventListener('change', e => {
             this.maxPrice = e.target.value;
-            this.addFilter('price')
+            (this.filters.has('price')) ? this.redoFilter() : this.addFilter('price');
         });
 
         startDate.addEventListener('change', e => {
             this.startDate = e.target.value;
-            this.addFilter('date')
+            (this.filters.has('date')) ? this.redoFilter() : this.addFilter('date')
         });
         endDate.addEventListener('change', e => {
             this.endDate = e.target.value;
-            this.addFilter('date')
+            (this.filters.has('date')) ? this.redoFilter() : this.addFilter('date')
         });
     };
 
@@ -175,6 +175,7 @@ class TicketApp {
         this.filterFunctions();
         this.eventlist = _eventlist__WEBPACK_IMPORTED_MODULE_0__.default;
         this.events = this.createEventList();
+        this.currentFilteredEvents = this.events;
         this.createEventListeners();
         this.createLocationFilter();
     };

@@ -1,5 +1,5 @@
 class EventItem {
-    constructor(day, date, time, event, venue, city, price, isSellingFast, isSoldOut, dateVal) {
+    constructor(day, date, time, event, venue, city, price, isSoldOut, dateVal) {
         this.day = day;
         this.date = date;
         this.time = time;
@@ -7,7 +7,6 @@ class EventItem {
         this.venue = venue;
         this.city = city;
         this.price = price;
-        this.isSellingFast = isSellingFast;
         this.isSoldOut = isSoldOut;
         this.dateVal = dateVal;
 
