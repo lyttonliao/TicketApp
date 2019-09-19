@@ -13,7 +13,6 @@ class TicketApp {
         return events
     };
     
-    // part 2
     createLocationFilter() {   
         let locationFilter = document.getElementById('location-filter');
         let uniqueLocations = new Set()

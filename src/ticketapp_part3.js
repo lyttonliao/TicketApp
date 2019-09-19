@@ -52,39 +52,39 @@ class TicketApp {
 
     filterLocation() {
         let currentFilter = []
-        this.currentFilteredEvents.forEach(event => {
+        this.allFilteredEvents.forEach(event => {
             (event.city !== this.location) ? event.listing.style.display = "none" : currentFilter.push(event)
         });
-        this.currentFilteredEvents = currentFilter
+        this.allFilteredEvents = currentFilter;
     };
 
     filterAvailability() {
         let currentFilter = []
-        this.currentFilteredEvents.forEach(event => {
+        this.allFilteredEvents.forEach(event => {
             (event.isSoldOut) ? event.listing.style.display = "none" : currentFilter.push(event)
         });
-        this.currentFilteredEvents = currentFilter
+        this.allFilteredEvents = currentFilter;
     };
 
     filterPrice() {
         let currentFilter = []
         this.minPrice = this.minPrice || 0;
         this.maxPrice = this.maxPrice || Number.MAX_SAFE_INTEGER;
-        this.currentFilteredEvents.forEach(event => {
+        this.allFilteredEvents.forEach(event => {
             (event.price <= this.minPrice || event.price >= this.maxPrice) ? event.listing.style.display = "none" : currentFilter.push(event)
         });
-        this.currentFilteredEvents = currentFilter
+        this.allFilteredEvents = currentFilter;
     };
 
     filterDate() {
         let currentFilter = []
         this.startDate = this.startDate || "2018-01-01";
         this.endDate = this.endDate || "2019-12-31";
-        this.currentFilteredEvents.forEach(event => {
+        this.allFilteredEvents.forEach(event => {
             const date = Date.parse(event.dateVal.slice(0,10));
             (Date.parse(this.startDate) > date || Date.parse(this.endDate) < date) ? event.listing.style.display = "none" : currentFilter.push(event)
         });
-        this.currentFilteredEvents = currentFilter
+        this.allFilteredEvents = currentFilter;
     };
 
     createEventListeners() {
@@ -161,7 +161,7 @@ class TicketApp {
     };
 
     resetFilter(events) {
-        this.currentFilteredEvents = events;
+        this.allFilteredEvents = events;
         events.forEach(event => {
             event.listing.style.display = "flex";
         });
@@ -181,7 +181,7 @@ class TicketApp {
         this.filterFunctions();
         this.eventlist = _eventlist__WEBPACK_IMPORTED_MODULE_0__.default;
         this.events = this.createEventList();
-        this.currentFilteredEvents = this.events;
+        this.allFilteredEvents = this.events;
         this.createEventListeners();
         this.createLocationFilter();
     };
